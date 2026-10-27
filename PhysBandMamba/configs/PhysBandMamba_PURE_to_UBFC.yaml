@@ -1,0 +1,165 @@
+BASE: ['']
+TOOLBOX_MODE: train_and_test
+TRAIN:
+  BATCH_SIZE: 16
+  EPOCHS: 30
+  LR: 0.0003
+  MODEL_FILE_NAME: SINCrPPG_StepAY_MidWidth72_PURE_to_UBFC_seed456
+  AUG: 1
+  DATA:
+    FS: 30
+    DATASET: PURE
+    DO_PREPROCESS: false
+    DATA_FORMAT: NDCHW
+    DATA_PATH: /home/sacha/VascPhysProject/data/raw/PURE
+    CACHED_PATH: /home/sacha/VascPhysProject/data/preprocessed/PURE
+    EXP_DATA_NAME: ''
+    BEGIN: 0.0
+    END: 0.8
+    PREPROCESS:
+      DATA_TYPE: [Standardized]
+      LABEL_TYPE: Standardized
+      DO_CHUNK: true
+      CHUNK_LENGTH: 160
+      CROP_FACE:
+        DO_CROP_FACE: true
+        USE_LARGE_FACE_BOX: true
+        LARGE_BOX_COEF: 1.5
+        DETECTION: {DO_DYNAMIC_DETECTION: false, DYNAMIC_DETECTION_FREQUENCY: 30,
+          USE_MEDIAN_FACE_BOX: false}
+      RESIZE: {H: 128, W: 128}
+VALID:
+  DATA:
+    FS: 30
+    DATASET: PURE
+    DO_PREPROCESS: false
+    DATA_FORMAT: NDCHW
+    DATA_PATH: /home/sacha/VascPhysProject/data/raw/PURE
+    CACHED_PATH: /home/sacha/VascPhysProject/data/preprocessed/PURE
+    EXP_DATA_NAME: ''
+    BEGIN: 0.8
+    END: 1.0
+    PREPROCESS:
+      DATA_TYPE: [Standardized]
+      LABEL_TYPE: Standardized
+      DO_CHUNK: true
+      CHUNK_LENGTH: 160
+      CROP_FACE:
+        DO_CROP_FACE: true
+        USE_LARGE_FACE_BOX: true
+        LARGE_BOX_COEF: 1.5
+        DETECTION: {DO_DYNAMIC_DETECTION: false, DYNAMIC_DETECTION_FREQUENCY: 30,
+          USE_MEDIAN_FACE_BOX: false}
+      RESIZE: {H: 128, W: 128}
+TEST:
+  METRICS: [MAE, RMSE, MAPE, Pearson, SNR]
+  USE_LAST_EPOCH: false
+  DATA:
+    FS: 30
+    DATASET: UBFC
+    DO_PREPROCESS: false
+    DATA_FORMAT: NDCHW
+    DATA_PATH: /home/sacha/VascPhysProject/data/raw/UBFC
+    CACHED_PATH: /home/sacha/VascPhysProject/data/preprocessed/UBFC
+    EXP_DATA_NAME: ''
+    BEGIN: 0.0
+    END: 1.0
+    PREPROCESS:
+      DATA_TYPE: [Standardized]
+      LABEL_TYPE: Standardized
+      DO_CHUNK: true
+      CHUNK_LENGTH: 160
+      CROP_FACE:
+        DO_CROP_FACE: true
+        USE_LARGE_FACE_BOX: true
+        LARGE_BOX_COEF: 1.5
+        DETECTION: {DO_DYNAMIC_DETECTION: false, DYNAMIC_DETECTION_FREQUENCY: 30,
+          USE_MEDIAN_FACE_BOX: false}
+      RESIZE: {H: 128, W: 128}
+DEVICE: cuda:0
+NUM_OF_GPU_TRAIN: 1
+LOG: {PATH: runs/sincrppg/StepAY_MidWidth72/PURE_to_UBFC}
+MODEL:
+  DROP_RATE: 0.0
+  NAME: SINCrPPG
+  MODEL_DIR: /home/sacha/VascPhysProject/experiments/sincrppg_StepAY_MidWidth72_PURE_to_UBFC_seed456
+  SINCRPPG:
+    C: 96
+    USE_DIFF_FUSION: true
+    DIFF_FUSION_APHA: 0.5
+    DIFF_FUSION_BELTA: 0.5
+    USE_SPECTRAL_BAND: true
+    USE_CHANNEL_GATE: false
+    USE_BG_PROJECTOR: false
+    USE_HUMAN_PROJECTOR: false
+    USE_INVARIANCE: false
+    USE_BG_INVARIANCE_BLOCK: false
+    USE_HUMAN_INVARIANCE_BLOCK: false
+    BG_INVARIANCE_GAMMA_MAX: 0.4
+    HUMAN_INVARIANCE_GAMMA_MAX: 0.4
+    LOSS_TYPE: hybrid
+    LAMBDA_FACE_AFFINE_INV: 0.0
+    FACE_AFFINE_SCALE_AMP: 0.08
+    FACE_AFFINE_ROT_DEG_AMP: 8.0
+    FACE_AFFINE_SHEAR_DEG_AMP: 5.0
+    FACE_AFFINE_TRANS_FRAC_AMP: 0.03
+    TEMPORAL_ENCODER: classicmamba_exact
+    BAND_TRANS_LOW: [0.5, 0.65]
+    BAND_TRANS_HIGH: [3.0, 3.3]
+    R_MIN: 0.1
+    PSD_BINS: 8
+    K_BG: 4
+    ALPHA_MAX: 0.75
+    PROJECTOR_RIDGE: 0.001
+    LAMBDA_BG_PULSE_LEAK: 0.0
+    K_HUMAN: 4
+    BETA_MAX: 0.75
+    DILATION_EXCLUSION_KERNEL: 9
+    TCN_KERNEL: 5
+    TCN_DILATIONS: [1, 2, 4]
+    TCN_DROPOUT: 0.0
+    MAMBA_D_STATE: 8
+    MAMBA_D_CONV: 4
+    MAMBA_EXPAND: 1
+    NUISANCE_WARMUP_EPOCHS: 5
+    NUISANCE_RAMP_EPOCHS: 10
+    LAMBDA_OOB: 0.0
+    LAMBDA_GATE: 0.05
+    LAMBDA_BG_IND: 0.01
+    LAMBDA_HUMAN_IND: 0.01
+    LAMBDA_INV_TIME: 0.05
+    LAMBDA_INV_FREQ: 0.02
+    AUG_STRENGTH: 1.0
+    TRAIN_NUISANCE_AUG_PROB: 0.5
+    TRAIN_NUISANCE_AUG_STRENGTH: 1.0
+    TRAIN_NUISANCE_AUG_COMPONENTS: "affine,warp"
+    USE_EFFICIENT_STEM: True
+    STEM_NARROW_RATIO: 4
+    PARAM_SOFT_LIMIT: 300000
+    PARAM_HARD_WARN: 700000
+    GATE_BIAS_INIT: -1.0
+    GATE_LR_MULT: 10.0
+    MASK_TEMPERATURE_INIT: 2.0
+    MASK_TEMPERATURE_MAX: 2.5
+    LAMBDA_MASK_ENTROPY: 0.005
+    LAMBDA_ANTI_OCTAVE: 0.0
+    ANTI_OCTAVE_START_EPOCH: 15
+    BEST_EPOCH_SELECTION: smoothed
+    BEST_EPOCH_SMOOTH_WINDOW: 3
+    BG_BASIS_MODE: learned
+    HUMAN_BASIS_MODE: learned
+    STOPGRAD_BG_BRANCH: false
+    LAMBDA_BG_SWAP_INV: 0.0
+    OOB_FACE_ONLY: true
+    USE_CONTEXT_GATE: false
+    USE_STRUCTURED_CONTEXT: false
+    USE_STEM3: true
+    USE_RHYTHMMAMBA_STEM: true
+    RMSTEM_GRADUAL_WIDEN: true
+    RMSTEM_GRADUAL_MID_WIDTH: 72
+    CLASSICMAMBA_BIDIR: false
+INFERENCE:
+  BATCH_SIZE: 16
+  EVALUATION_METHOD: FFT
+  EVALUATION_WINDOW: {USE_SMALLER_WINDOW: false, WINDOW_SIZE: 10}
+  MODEL_PATH: ''
